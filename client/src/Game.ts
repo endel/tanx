@@ -510,19 +510,30 @@ export class Game {
       }
     }
 
-    // Camera follow (lower tilted 3/4 offset)
+    // Camera follow with mouse look-ahead
     const myTank = this.tanks.get(this.mySessionId);
     if (myTank) {
       const tx = myTank.group.position.x;
       const tz = myTank.group.position.z;
+
+      // Mouse offset from screen center, normalized to [-1, 1]
+      const nx = (this.mouseX / window.innerWidth) * 2 - 1;
+      const ny = (this.mouseY / window.innerHeight) * 2 - 1;
+
+      // Screen-to-world mapping for isometric 45° camera
+      // Screen right → world (1, 0, -1)/√2, Screen down → world (1, 0, 1)/√2
+      const lookAhead = 3;
+      const offsetX = (nx + ny) * 0.707 * lookAhead;
+      const offsetZ = (-nx + ny) * 0.707 * lookAhead;
+
       this.camera.position.x = THREE.MathUtils.lerp(
         this.camera.position.x,
-        tx + 20,
+        tx + 20 + offsetX,
         0.08
       );
       this.camera.position.z = THREE.MathUtils.lerp(
         this.camera.position.z,
-        tz + 20,
+        tz + 20 + offsetZ,
         0.08
       );
       this.camera.position.y = 20;
