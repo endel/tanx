@@ -13,5 +13,5 @@ const server = defineServer({
 });
 
 server.listen(port).then(() => {
-  console.log(`Tanx server listening on http://localhost:${port}`);
+  console.log(`Tank Battle server listening on http://localhost:${port}`);
 });

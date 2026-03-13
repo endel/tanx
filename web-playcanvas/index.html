@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tank Battle Multiplayer — Three.js</title>
+  <title>Tank Battle Multiplayer — PlayCanvas</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       overflow: hidden; background: #111; font-family: 'Courier New', monospace;
       cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpolygon points='16,5 25.5,10.5 25.5,21.5 16,27 6.5,21.5 6.5,10.5' fill='none' stroke='black' stroke-width='3' opacity='0.3'/%3E%3Cpolygon points='16,5 25.5,10.5 25.5,21.5 16,27 6.5,21.5 6.5,10.5' fill='none' stroke='white' stroke-width='1.5' opacity='0.8'/%3E%3Ccircle cx='16' cy='16' r='2' fill='white' opacity='0.9'/%3E%3C/svg%3E") 16 16, crosshair;
     }
-    canvas { display: block; }
+    #application-canvas { display: block; width: 100%; height: 100%; }
 
     #hud {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -184,9 +184,39 @@
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       font-size: 18px; color: #aaa;
     }
+
+    /* Per-tank HUD health bars */
+    #tank-huds { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .tank-hud {
+      position: absolute;
+      transform: translate(-50%, -100%);
+      width: 48px;
+    }
+    .tank-hp-bar {
+      width: 100%; height: 5px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .tank-hp-fill {
+      height: 100%; width: 100%;
+      background: #4f4;
+      transition: width 0.15s;
+    }
+    .tank-shield-bar {
+      width: 100%; height: 3px;
+      background: rgba(0,0,0,0.3);
+      margin-bottom: 1px;
+    }
+    .tank-shield-fill {
+      height: 100%; width: 0%;
+      background: #48f;
+      transition: width 0.15s;
+    }
   </style>
 </head>
 <body>
+  <canvas id="application-canvas"></canvas>
+  <div id="tank-huds"></div>
   <div id="hud">
     <div id="connect-status">Connecting...</div>
 
