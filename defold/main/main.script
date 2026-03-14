@@ -3,7 +3,6 @@
 
 local Colyseus = require "colyseus.sdk"
 
--- 1 server unit = 16 pixels
 local SCALE = 16
 local MAP_SIZE = 48 * SCALE
 
@@ -13,6 +12,7 @@ local TEAM_COLORS = {
 	[2] = vmath.vector4(0.27, 1, 0.27, 1),
 	[3] = vmath.vector4(1, 1, 0.27, 1),
 }
+local TEAM_NAMES = { [0] = "Red", [1] = "Blue", [2] = "Green", [3] = "Yellow" }
 
 local PICKABLE_COLORS = {
 	repair = vmath.vector4(0.27, 1, 0.27, 1),
@@ -40,7 +40,6 @@ local LEVEL = {
 -- ── Helper functions ──
 
 local function build_level(self)
-	-- Interior blocks
 	for _, block in ipairs(LEVEL) do
 		local bx, by, bw, bh = block[1], block[2], block[3], block[4]
 		local pos = vmath.vector3(bx * SCALE, by * SCALE, 0)
@@ -50,14 +49,13 @@ local function build_level(self)
 		table.insert(self.blocks, id)
 	end
 
-	-- Boundary walls
 	local thickness = 1.5
 	local wall_color = vmath.vector4(0.1, 0.27, 0.53, 0.9)
 	local walls = {
-		{ 24, -thickness / 2, 48 + thickness * 2, thickness },       -- bottom
-		{ 24, 48 + thickness / 2, 48 + thickness * 2, thickness },   -- top
-		{ -thickness / 2, 24, thickness, 48 + thickness * 2 },       -- left
-		{ 48 + thickness / 2, 24, thickness, 48 + thickness * 2 },   -- right
+		{ 24, -thickness / 2, 48 + thickness * 2, thickness },
+		{ 24, 48 + thickness / 2, 48 + thickness * 2, thickness },
+		{ -thickness / 2, 24, thickness, 48 + thickness * 2 },
+		{ 48 + thickness / 2, 24, thickness, 48 + thickness * 2 },
 	}
 	for _, w in ipairs(walls) do
 		local pos = vmath.vector3(w[1] * SCALE, w[2] * SCALE, 0)
@@ -66,6 +64,34 @@ local function build_level(self)
 		sprite.set_constant(msg.url(nil, id, "sprite"), "tint", wall_color)
 		table.insert(self.blocks, id)
 	end
+end
+
+local function update_leaderboard(self)
+	if not self.room then return end
+	local teams = {}
+	for i = 0, 3 do
+		local team = self.room.state.teams[i]
+		if team then
+			table.insert(teams, { id = i, score = team.score })
+		end
+	end
+	table.sort(teams, function(a, b) return a.score > b.score end)
+
+	local lines = {}
+	for rank, t in ipairs(teams) do
+		table.insert(lines, (TEAM_NAMES[t.id] or "?") .. ": " .. t.score)
+	end
+	self.leaderboard_text = table.concat(lines, "\n")
+	label.set_text("#leaderboard", self.leaderboard_text)
+end
+
+local function show_winner(self, winner_team_id)
+	local my_tank = self.room.state.tanks[self.my_session_id]
+	local is_winner = my_tank and my_tank.team == winner_team_id
+	local text = is_winner and "VICTORY" or "DEFEAT"
+	local team_name = TEAM_NAMES[winner_team_id] or "?"
+	label.set_text("#announcement", text .. "\n" .. team_name .. " Team Wins")
+	self.announcement_timer = 3.0
 end
 
 local function bind_room_events(self, room)
@@ -104,6 +130,13 @@ local function bind_room_events(self, room)
 		cb:listen(tank, "dead", function(val)
 			local t = self.tanks[key]
 			if t then t.dead = val end
+			if key == self.my_session_id and val then
+				label.set_text("#announcement", "DESTROYED\nRespawning...")
+				self.announcement_timer = 2.0
+			end
+		end)
+		cb:listen(tank, "score", function(val)
+			update_leaderboard(self)
 		end)
 	end)
 
@@ -160,6 +193,20 @@ local function bind_room_events(self, room)
 			self.pickables[key] = nil
 		end
 	end)
+
+	-- Teams
+	cb:on_add("teams", function(team, idx)
+		cb:listen(team, "score", function(val)
+			update_leaderboard(self)
+		end)
+	end)
+
+	-- Winner
+	cb:listen("winnerTeam", function(val)
+		if val >= 0 then
+			show_winner(self, val)
+		end
+	end)
 end
 
 local function send_input(self)
@@ -169,7 +216,6 @@ local function send_input(self)
 	if self.keys["left"] then raw_x = raw_x - 1 end
 	if self.keys["right"] then raw_x = raw_x + 1 end
 
-	-- 2D top-down: Y inverted (screen Y up, server Y down)
 	local dir_x = raw_x
 	local dir_y = -raw_y
 
@@ -179,7 +225,6 @@ local function send_input(self)
 		self.last_dir_y = dir_y
 	end
 
-	-- Aim at mouse
 	local my_tank = self.tanks[self.my_session_id]
 	if my_tank then
 		local tank_pos = go.get_position(my_tank.id)
@@ -219,6 +264,8 @@ function init(self)
 	self.last_dir_x = -999
 	self.last_dir_y = -999
 	self.last_angle = -999
+	self.leaderboard_text = ""
+	self.announcement_timer = 0
 
 	build_level(self)
 
@@ -247,7 +294,6 @@ function update(self, dt)
 		local new_y = pos.y + (tank.target_y - pos.y) * 0.2
 		go.set_position(vmath.vector3(new_x, new_y, 0), tank.id)
 
-		-- Body rotation toward movement
 		local dx = tank.target_x - pos.x
 		local dy = tank.target_y - pos.y
 		if math.abs(dx) > 0.5 or math.abs(dy) > 0.5 then
@@ -255,7 +301,6 @@ function update(self, dt)
 		end
 		go.set_rotation(vmath.quat_rotation_z(tank.body_angle), tank.id)
 
-		-- Dead blink / alive visibility
 		local visible = true
 		if tank.dead then
 			visible = (math.floor(socket.gettime() * 4) % 2 == 0)
@@ -275,8 +320,8 @@ function update(self, dt)
 	-- Pickable pulse
 	local t = socket.gettime()
 	for key, pick in pairs(self.pickables) do
-		local s = 1.0 + math.sin(t * 3) * 0.15
-		go.set_scale(vmath.vector3(3 * s, 3 * s, 1), pick.id)
+		local s = 1.0 + math.sin(t * 3) * 0.1
+		go.set_scale(vmath.vector3(2 * s, 2 * s, 1), pick.id)
 	end
 
 	-- Camera follow
@@ -287,6 +332,14 @@ function update(self, dt)
 		local new_x = cam_pos.x + (tank_pos.x - cam_pos.x) * 0.08
 		local new_y = cam_pos.y + (tank_pos.y - cam_pos.y) * 0.08
 		go.set_position(vmath.vector3(new_x, new_y, 0), "camera")
+	end
+
+	-- Announcement timer
+	if self.announcement_timer > 0 then
+		self.announcement_timer = self.announcement_timer - dt
+		if self.announcement_timer <= 0 then
+			label.set_text("#announcement", "")
+		end
 	end
 end
 
@@ -309,7 +362,6 @@ function on_input(self, action_id, action)
 		end
 	end
 
-	-- Mouse move (no action_id)
 	if not action_id then
 		self.mouse_x = action.x
 		self.mouse_y = action.y
