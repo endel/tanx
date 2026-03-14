@@ -1,0 +1,73 @@
+name: "main"
+instances {
+  id: "game"
+  prototype: ""
+  children: "camera"
+  components {
+    id: "script"
+    component: "/main/main.script"
+  }
+  components {
+    id: "tank_factory"
+    component: ""
+    properties {
+      id: "prototype"
+      value: "/main/tank.go"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  components {
+    id: "bullet_factory"
+    component: ""
+    properties {
+      id: "prototype"
+      value: "/main/bullet.go"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  components {
+    id: "pickable_factory"
+    component: ""
+    properties {
+      id: "prototype"
+      value: "/main/pickable.go"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+  components {
+    id: "block_factory"
+    component: ""
+    properties {
+      id: "prototype"
+      value: "/main/block.go"
+      type: PROPERTY_TYPE_HASH
+    }
+  }
+}
+instances {
+  id: "camera"
+  components {
+    id: "camera"
+    component: ""
+    properties {
+      id: "fov"
+      value: "45.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "near_z"
+      value: "-1.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "far_z"
+      value: "1.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+    properties {
+      id: "orthographic_projection"
+      value: "1"
+      type: PROPERTY_TYPE_BOOLEAN
+    }
+  }
+}
