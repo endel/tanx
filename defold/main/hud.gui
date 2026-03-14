@@ -1,0 +1,65 @@
+script: "/main/hud.gui_script"
+fonts {
+  name: "default"
+  font: "/builtins/fonts/default.font"
+}
+nodes {
+  type: TYPE_TEXT
+  id: "leaderboard"
+  position {
+    x: 860.0
+    y: 600.0
+  }
+  size {
+    x: 180.0
+    y: 120.0
+  }
+  text: ""
+  font: "default"
+  outline {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  shadow {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  line_break: true
+  pivot: PIVOT_NE
+}
+nodes {
+  type: TYPE_TEXT
+  id: "announcement"
+  position {
+    x: 480.0
+    y: 320.0
+  }
+  size {
+    x: 400.0
+    y: 100.0
+  }
+  scale {
+    x: 2.0
+    y: 2.0
+  }
+  text: ""
+  font: "default"
+  outline {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  shadow {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  pivot: PIVOT_CENTER
+  line_break: true
+}

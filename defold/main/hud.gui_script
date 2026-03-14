@@ -1,0 +1,22 @@
+function init(self)
+	self.announcement_timer = 0
+end
+
+function update(self, dt)
+	if self.announcement_timer > 0 then
+		self.announcement_timer = self.announcement_timer - dt
+		if self.announcement_timer <= 0 then
+			gui.set_text(gui.get_node("announcement"), "")
+		end
+	end
+end
+
+function on_message(self, message_id, message)
+	if message_id == hash("update_leaderboard") then
+		gui.set_text(gui.get_node("leaderboard"), message.text)
+
+	elseif message_id == hash("show_announcement") then
+		gui.set_text(gui.get_node("announcement"), message.text)
+		self.announcement_timer = message.duration or 3.0
+	end
+end

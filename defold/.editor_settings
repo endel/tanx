@@ -1,0 +1,18 @@
+{
+  :code {
+    :breakpoints [
+    ]
+  }
+  :workflow {
+    :open-tabs [
+      [
+      ]
+    ]
+    :recent-files [
+      [
+        "/game.project"
+        :cljfx-form-view
+      ]
+    ]
+  }
+}

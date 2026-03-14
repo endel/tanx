@@ -1,0 +1,380 @@
+
+ÕU
+¿U
+
+
+local Colyseus = require "colyseus.sdk"
+
+local SCALE = 16
+local MAP_SIZE = 48 * SCALE
+
+local TEAM_COLORS = {
+	[0] = vmath.vector4(1, 0.27, 0.27, 1),
+	[1] = vmath.vector4(0.27, 0.53, 1, 1),
+	[2] = vmath.vector4(0.27, 1, 0.27, 1),
+	[3] = vmath.vector4(1, 1, 0.27, 1),
+}
+local TEAM_NAMES = { [0] = "Red", [1] = "Blue", [2] = "Green", [3] = "Yellow" }
+
+local PICKABLE_COLORS = {
+	repair = vmath.vector4(0.27, 1, 0.27, 1),
+	damage = vmath.vector4(1, 0.27, 0.27, 1),
+	shield = vmath.vector4(0.27, 0.53, 1, 1),
+}
+
+local LEVEL = {
+	{13.5, 2, 1, 4}, {13.5, 12, 1, 2}, {12.5, 13.5, 3, 1}, {2, 13.5, 4, 1},
+	{11.5, 15, 1, 2}, {11.5, 23.5, 1, 5},
+	{10, 26.5, 4, 1}, {6, 26.5, 4, 1},
+	{2, 34.5, 4, 1}, {12.5, 34.5, 3, 1}, {13.5, 36, 1, 2}, {15, 36.5, 2, 1},
+	{13.5, 46, 1, 4},
+	{23.5, 36.5, 5, 1}, {26.5, 38, 1, 4}, {26.5, 42, 1, 4},
+	{34.5, 46, 1, 4}, {34.5, 36, 1, 2}, {35.5, 34.5, 3, 1}, {36.5, 33, 1, 2},
+	{46, 34.5, 4, 1},
+	{36.5, 24.5, 1, 5}, {38, 21.5, 4, 1}, {42, 21.5, 4, 1},
+	{46, 13.5, 4, 1}, {35.5, 13.5, 3, 1}, {34.5, 12, 1, 2}, {33, 11.5, 2, 1},
+	{34.5, 2, 1, 4},
+	{24.5, 11.5, 5, 1}, {21.5, 10, 1, 4}, {21.5, 6, 1, 4},
+	{18.5, 22, 1, 6}, {19, 18.5, 2, 1}, {26, 18.5, 6, 1}, {29.5, 19, 1, 2},
+	{29.5, 26, 1, 6}, {29, 29.5, 2, 1}, {22, 29.5, 6, 1}, {18.5, 29, 1, 2},
+}
+
+
+
+local function build_level(self)
+	for _, block in ipairs(LEVEL) do
+		local bx, by, bw, bh = block[1], block[2], block[3], block[4]
+		local pos = vmath.vector3(bx * SCALE, by * SCALE, 0)
+		local id = factory.create("#block_factory", pos)
+		go.set_scale(vmath.vector3(bw * SCALE, bh * SCALE, 1), id)
+		sprite.set_constant(msg.url(nil, id, "sprite"), "tint", vmath.vector4(0.13, 0.4, 0.67, 0.85))
+		table.insert(self.blocks, id)
+	end
+
+	local thickness = 1.5
+	local wall_color = vmath.vector4(0.1, 0.27, 0.53, 0.9)
+	local walls = {
+		{ 24, -thickness / 2, 48 + thickness * 2, thickness },
+		{ 24, 48 + thickness / 2, 48 + thickness * 2, thickness },
+		{ -thickness / 2, 24, thickness, 48 + thickness * 2 },
+		{ 48 + thickness / 2, 24, thickness, 48 + thickness * 2 },
+	}
+	for _, w in ipairs(walls) do
+		local pos = vmath.vector3(w[1] * SCALE, w[2] * SCALE, 0)
+		local id = factory.create("#block_factory", pos)
+		go.set_scale(vmath.vector3(w[3] * SCALE, w[4] * SCALE, 1), id)
+		sprite.set_constant(msg.url(nil, id, "sprite"), "tint", wall_color)
+		table.insert(self.blocks, id)
+	end
+end
+
+local function update_leaderboard(self)
+	if not self.room then return end
+	local teams = {}
+	for i = 0, 3 do
+		local team = self.room.state.teams[i]
+		if team then
+			table.insert(teams, { id = i, score = team.score })
+		end
+	end
+	table.sort(teams, function(a, b) return a.score > b.score end)
+
+	local lines = {}
+	for rank, t in ipairs(teams) do
+		table.insert(lines, (TEAM_NAMES[t.id] or "?") .. ": " .. t.score)
+	end
+	self.leaderboard_text = table.concat(lines, "\n")
+	label.set_text("#leaderboard", self.leaderboard_text)
+end
+
+local function show_winner(self, winner_team_id)
+	local my_tank = self.room.state.tanks[self.my_session_id]
+	local is_winner = my_tank and my_tank.team == winner_team_id
+	local text = is_winner and "VICTORY" or "DEFEAT"
+	local team_name = TEAM_NAMES[winner_team_id] or "?"
+	label.set_text("#announcement", text .. "\n" .. team_name .. " Team Wins")
+	self.announcement_timer = 3.0
+end
+
+local function bind_room_events(self, room)
+	local cb = Colyseus.callbacks(room)
+
+	
+	cb:on_add("tanks", function(tank, key)
+		local sx, sy = tank.x * SCALE, tank.y * SCALE
+		local id = factory.create("#tank_factory", vmath.vector3(sx, sy, 0))
+		local tc = TEAM_COLORS[tank.team] or vmath.vector4(1, 1, 1, 1)
+
+		sprite.set_constant(msg.url(nil, id, "body"), "tint",
+			vmath.vector4(tc.x * 0.6 + 0.1, tc.y * 0.6 + 0.1, tc.z * 0.6 + 0.1, 1))
+		sprite.set_constant(msg.url(nil, id, "turret"), "tint",
+			vmath.vector4(tc.x * 0.3, tc.y * 0.3, tc.z * 0.3, 1))
+		sprite.set_constant(msg.url(nil, id, "ring"), "tint",
+			vmath.vector4(tc.x, tc.y, tc.z, 0.3))
+
+		self.tanks[key] = {
+			id = id, target_x = sx, target_y = sy,
+			angle = 0, body_angle = 0, dead = tank.dead, team = tank.team
+		}
+
+		cb:listen(tank, "x", function(val)
+			local t = self.tanks[key]
+			if t then t.target_x = val * SCALE end
+		end)
+		cb:listen(tank, "y", function(val)
+			local t = self.tanks[key]
+			if t then t.target_y = val * SCALE end
+		end)
+		cb:listen(tank, "angle", function(val)
+			local t = self.tanks[key]
+			if t then t.angle = val end
+		end)
+		cb:listen(tank, "dead", function(val)
+			local t = self.tanks[key]
+			if t then t.dead = val end
+			if key == self.my_session_id and val then
+				label.set_text("#announcement", "DESTROYED\nRespawning...")
+				self.announcement_timer = 2.0
+			end
+		end)
+		cb:listen(tank, "score", function(val)
+			update_leaderboard(self)
+		end)
+	end)
+
+	cb:on_remove("tanks", function(tank, key)
+		local t = self.tanks[key]
+		if t then
+			go.delete(t.id)
+			self.tanks[key] = nil
+		end
+	end)
+
+	
+	cb:on_add("bullets", function(bullet, key)
+		local sx, sy = bullet.x * SCALE, bullet.y * SCALE
+		local id = factory.create("#bullet_factory", vmath.vector3(sx, sy, 0.2))
+		local color = bullet.special
+			and vmath.vector4(1, 0.53, 0, 1)
+			or vmath.vector4(1, 1, 0.4, 1)
+		sprite.set_constant(msg.url(nil, id, "sprite"), "tint", color)
+
+		self.bullets[key] = { id = id, target_x = sx, target_y = sy }
+
+		cb:listen(bullet, "x", function(val)
+			local b = self.bullets[key]
+			if b then b.target_x = val * SCALE end
+		end)
+		cb:listen(bullet, "y", function(val)
+			local b = self.bullets[key]
+			if b then b.target_y = val * SCALE end
+		end)
+	end)
+
+	cb:on_remove("bullets", function(bullet, key)
+		local b = self.bullets[key]
+		if b then
+			go.delete(b.id)
+			self.bullets[key] = nil
+		end
+	end)
+
+	
+	cb:on_add("pickables", function(pick, key)
+		local sx, sy = pick.x * SCALE, pick.y * SCALE
+		local id = factory.create("#pickable_factory", vmath.vector3(sx, sy, 0.1))
+		local color = PICKABLE_COLORS[pick.type] or vmath.vector4(1, 1, 1, 1)
+		sprite.set_constant(msg.url(nil, id, "sprite"), "tint", color)
+		self.pickables[key] = { id = id }
+	end)
+
+	cb:on_remove("pickables", function(pick, key)
+		local p = self.pickables[key]
+		if p then
+			go.delete(p.id)
+			self.pickables[key] = nil
+		end
+	end)
+
+	
+	cb:on_add("teams", function(team, idx)
+		cb:listen(team, "score", function(val)
+			update_leaderboard(self)
+		end)
+	end)
+
+	
+	cb:listen("winnerTeam", function(val)
+		if val >= 0 then
+			show_winner(self, val)
+		end
+	end)
+end
+
+local function send_input(self)
+	local raw_x, raw_y = 0, 0
+	if self.keys["up"] then raw_y = raw_y - 1 end
+	if self.keys["down"] then raw_y = raw_y + 1 end
+	if self.keys["left"] then raw_x = raw_x - 1 end
+	if self.keys["right"] then raw_x = raw_x + 1 end
+
+	local dir_x = raw_x
+	local dir_y = -raw_y
+
+	if dir_x ~= self.last_dir_x or dir_y ~= self.last_dir_y then
+		self.room:send("move", { x = dir_x, y = dir_y })
+		self.last_dir_x = dir_x
+		self.last_dir_y = dir_y
+	end
+
+	local my_tank = self.tanks[self.my_session_id]
+	if my_tank then
+		local tank_pos = go.get_position(my_tank.id)
+		local cam_pos = go.get_position("camera")
+		local sw = tonumber(sys.get_config("display.width"))
+		local sh = tonumber(sys.get_config("display.height"))
+		local world_x = self.mouse_x + cam_pos.x - sw / 2
+		local world_y = self.mouse_y + cam_pos.y - sh / 2
+
+		local dx = world_x - tank_pos.x
+		local dy = world_y - tank_pos.y
+		local aim_angle = math.atan2(dx, dy) * (180 / math.pi)
+		aim_angle = ((aim_angle % 360) + 360) % 360
+
+		if math.abs(aim_angle - self.last_angle) > 1 then
+			self.room:send("target", aim_angle)
+			self.last_angle = aim_angle
+		end
+	end
+end
+
+
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	self.room = nil
+	self.my_session_id = nil
+	self.tanks = {}
+	self.bullets = {}
+	self.pickables = {}
+	self.blocks = {}
+	self.keys = {}
+	self.mouse_x = 0
+	self.mouse_y = 0
+	self.mouse_down = false
+	self.last_dir_x = -999
+	self.last_dir_y = -999
+	self.last_angle = -999
+	self.leaderboard_text = ""
+	self.announcement_timer = 0
+
+	build_level(self)
+
+	local client = Colyseus.Client("ws://localhost:2567")
+	client:join_or_create("battle", function(err, room)
+		if err then
+			print("Connection error: " .. tostring(err))
+			return
+		end
+		self.room = room
+		self.my_session_id = room.session_id
+		print("Joined room: " .. room.room_id .. " as " .. room.session_id)
+		bind_room_events(self, room)
+	end)
+end
+
+function update(self, dt)
+	if not self.room then return end
+
+	send_input(self)
+
+	
+	for key, tank in pairs(self.tanks) do
+		local pos = go.get_position(tank.id)
+		local new_x = pos.x + (tank.target_x - pos.x) * 0.2
+		local new_y = pos.y + (tank.target_y - pos.y) * 0.2
+		go.set_position(vmath.vector3(new_x, new_y, 0), tank.id)
+
+		local dx = tank.target_x - pos.x
+		local dy = tank.target_y - pos.y
+		if math.abs(dx) > 0.5 or math.abs(dy) > 0.5 then
+			tank.body_angle = math.atan2(dy, dx) - math.pi / 2
+		end
+		go.set_rotation(vmath.quat_rotation_z(tank.body_angle), tank.id)
+
+		local visible = true
+		if tank.dead then
+			visible = (math.floor(socket.gettime() * 4) % 2 == 0)
+		end
+		msg.post(msg.url(nil, tank.id, "body"), visible and "enable" or "disable")
+		msg.post(msg.url(nil, tank.id, "turret"), visible and "enable" or "disable")
+	end
+
+	
+	for key, bullet in pairs(self.bullets) do
+		local pos = go.get_position(bullet.id)
+		local new_x = pos.x + (bullet.target_x - pos.x) * 0.4
+		local new_y = pos.y + (bullet.target_y - pos.y) * 0.4
+		go.set_position(vmath.vector3(new_x, new_y, 0.2), bullet.id)
+	end
+
+	
+	local t = socket.gettime()
+	for key, pick in pairs(self.pickables) do
+		local s = 1.0 + math.sin(t * 3) * 0.1
+		go.set_scale(vmath.vector3(2 * s, 2 * s, 1), pick.id)
+	end
+
+	
+	local my_tank = self.tanks[self.my_session_id]
+	if my_tank then
+		local tank_pos = go.get_position(my_tank.id)
+		local cam_pos = go.get_position("camera")
+		local new_x = cam_pos.x + (tank_pos.x - cam_pos.x) * 0.08
+		local new_y = cam_pos.y + (tank_pos.y - cam_pos.y) * 0.08
+		go.set_position(vmath.vector3(new_x, new_y, 0), "camera")
+	end
+
+	
+	if self.announcement_timer > 0 then
+		self.announcement_timer = self.announcement_timer - dt
+		if self.announcement_timer <= 0 then
+			label.set_text("#announcement", "")
+		end
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("up") then
+		self.keys["up"] = not action.released
+	elseif action_id == hash("down") then
+		self.keys["down"] = not action.released
+	elseif action_id == hash("left") then
+		self.keys["left"] = not action.released
+	elseif action_id == hash("right") then
+		self.keys["right"] = not action.released
+	elseif action_id == hash("shoot") then
+		if action.pressed then
+			self.mouse_down = true
+			if self.room then self.room:send("shoot", true) end
+		elseif action.released then
+			self.mouse_down = false
+			if self.room then self.room:send("shoot", false) end
+		end
+	end
+
+	if not action_id then
+		self.mouse_x = action.x
+		self.mouse_y = action.y
+	end
+
+	return false
+end
+
+function final(self)
+	if self.room then
+		self.room:leave()
+	end
+end
+@main/main.scriptcolyseus.sdk/colyseus/sdk.luac" 

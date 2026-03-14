@@ -81,8 +81,11 @@ local function update_leaderboard(self)
 	for rank, t in ipairs(teams) do
 		table.insert(lines, (TEAM_NAMES[t.id] or "?") .. ": " .. t.score)
 	end
-	self.leaderboard_text = table.concat(lines, "\n")
-	label.set_text("#leaderboard", self.leaderboard_text)
+	msg.post("hud#gui", "update_leaderboard", { text = table.concat(lines, "\n") })
+end
+
+local function show_announcement(self, text, duration)
+	msg.post("hud#gui", "show_announcement", { text = text, duration = duration or 3.0 })
 end
 
 local function show_winner(self, winner_team_id)
@@ -90,8 +93,7 @@ local function show_winner(self, winner_team_id)
 	local is_winner = my_tank and my_tank.team == winner_team_id
 	local text = is_winner and "VICTORY" or "DEFEAT"
 	local team_name = TEAM_NAMES[winner_team_id] or "?"
-	label.set_text("#announcement", text .. "\n" .. team_name .. " Team Wins")
-	self.announcement_timer = 3.0
+	show_announcement(self, text .. "\n" .. team_name .. " Team Wins", 3.0)
 end
 
 local function bind_room_events(self, room)
@@ -131,8 +133,7 @@ local function bind_room_events(self, room)
 			local t = self.tanks[key]
 			if t then t.dead = val end
 			if key == self.my_session_id and val then
-				label.set_text("#announcement", "DESTROYED\nRespawning...")
-				self.announcement_timer = 2.0
+				show_announcement(self, "DESTROYED\nRespawning...", 2.0)
 			end
 		end)
 		cb:listen(tank, "score", function(val)
@@ -265,7 +266,6 @@ function init(self)
 	self.last_dir_y = -999
 	self.last_angle = -999
 	self.leaderboard_text = ""
-	self.announcement_timer = 0
 
 	build_level(self)
 
@@ -334,13 +334,6 @@ function update(self, dt)
 		go.set_position(vmath.vector3(new_x, new_y, 0), "camera")
 	end
 
-	-- Announcement timer
-	if self.announcement_timer > 0 then
-		self.announcement_timer = self.announcement_timer - dt
-		if self.announcement_timer <= 0 then
-			label.set_text("#announcement", "")
-		end
-	end
 end
 
 function on_input(self, action_id, action)
