@@ -9,10 +9,11 @@ width = 960
 height = 640
 
 [input]
-game_binding = /input/game.input_binding
+game_binding = /input/game.input_bindingc
 
 [bootstrap]
 main_collection = /main/main.collectionc
 
 [library]
 include_dirs = colyseus
+

@@ -2,7 +2,7 @@
 
 ![Screenshot](screenshot.webp)
 
-3D web client for [Tank Battle Multiplayer](../README.md) built with [Three.js](https://threejs.org/), TypeScript, and Vite.
+3D web client for [Tank Battle Multiplayer](../README.md) built with [Three.js](https://threejs.org/), [Colyseus TypeScript SDK](https://docs.colyseus.io/getting-started/typescript), and Vite.
 
 ## Setup
 

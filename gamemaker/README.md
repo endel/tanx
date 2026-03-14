@@ -2,7 +2,7 @@
 
 ![Screenshot](screenshot.webp)
 
-2D client for [Tank Battle Multiplayer](../README.md) built with [GameMaker](https://gamemaker.io/) using [Kenney Top-Down Tanks](https://kenney.nl/assets/top-down-tanks-redux) sprites.
+2D client for [Tank Battle Multiplayer](../README.md) built with [GameMaker](https://gamemaker.io/) and the [Colyseus GameMaker SDK](https://docs.colyseus.io/getting-started/gamemaker).
 
 ## Setup
 
