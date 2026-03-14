@@ -40,12 +40,30 @@ local LEVEL = {
 -- ── Helper functions ──
 
 local function build_level(self)
+	-- Interior blocks
 	for _, block in ipairs(LEVEL) do
 		local bx, by, bw, bh = block[1], block[2], block[3], block[4]
 		local pos = vmath.vector3(bx * SCALE, by * SCALE, 0)
 		local id = factory.create("#block_factory", pos)
 		go.set_scale(vmath.vector3(bw * SCALE, bh * SCALE, 1), id)
 		sprite.set_constant(msg.url(nil, id, "sprite"), "tint", vmath.vector4(0.13, 0.4, 0.67, 0.85))
+		table.insert(self.blocks, id)
+	end
+
+	-- Boundary walls
+	local thickness = 1.5
+	local wall_color = vmath.vector4(0.1, 0.27, 0.53, 0.9)
+	local walls = {
+		{ 24, -thickness / 2, 48 + thickness * 2, thickness },       -- bottom
+		{ 24, 48 + thickness / 2, 48 + thickness * 2, thickness },   -- top
+		{ -thickness / 2, 24, thickness, 48 + thickness * 2 },       -- left
+		{ 48 + thickness / 2, 24, thickness, 48 + thickness * 2 },   -- right
+	}
+	for _, w in ipairs(walls) do
+		local pos = vmath.vector3(w[1] * SCALE, w[2] * SCALE, 0)
+		local id = factory.create("#block_factory", pos)
+		go.set_scale(vmath.vector3(w[3] * SCALE, w[4] * SCALE, 1), id)
+		sprite.set_constant(msg.url(nil, id, "sprite"), "tint", wall_color)
 		table.insert(self.blocks, id)
 	end
 end
@@ -173,7 +191,7 @@ local function send_input(self)
 
 		local dx = world_x - tank_pos.x
 		local dy = world_y - tank_pos.y
-		local aim_angle = math.atan2(dx, -dy) * (180 / math.pi)
+		local aim_angle = math.atan2(dx, dy) * (180 / math.pi)
 		aim_angle = ((aim_angle % 360) + 360) % 360
 
 		if math.abs(aim_angle - self.last_angle) > 1 then
@@ -257,7 +275,7 @@ function update(self, dt)
 	local t = socket.gettime()
 	for key, pick in pairs(self.pickables) do
 		local s = 1.0 + math.sin(t * 3) * 0.15
-		go.set_scale(vmath.vector3(10 * s, 10 * s, 1), pick.id)
+		go.set_scale(vmath.vector3(3 * s, 3 * s, 1), pick.id)
 	end
 
 	-- Camera follow
