@@ -11,7 +11,7 @@
   "option_android_compile_sdk":"",
   "option_android_device_support":0,
   "option_android_display_layout":"LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT",
-  "option_android_display_name":"TankBattle",
+  "option_android_display_name":"Realtime Tanks Demo",
   "option_android_edge_to_edge_display":false,
   "option_android_facebook_app_display_name":"",
   "option_android_facebook_id":"",

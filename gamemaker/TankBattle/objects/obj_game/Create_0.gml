@@ -19,6 +19,7 @@ team_tanks = array_create(4, 0);
 last_move_x = 0;
 last_move_y = 0;
 last_aim_angle = 0;
+last_target_send_time = 0;
 is_shooting = false;
 
 // --- Camera ---
@@ -51,7 +52,8 @@ for (var i = 0; i < array_length(blocks); i++) {
 }
 
 // --- Colyseus connection ---
-var client = colyseus_client_create("ws://localhost:2567");
+var server_url = debug_mode ? "ws://localhost:2567" : "wss://tanks-demo.colyseus.dev";
+var client = colyseus_client_create(server_url);
 global.net_room = colyseus_client_join_or_create(client, "battle", "{}");
 var net_room = global.net_room;
 
@@ -134,6 +136,10 @@ colyseus_on_join(net_room, method(id, function(_room) {
         }));
 
         colyseus_listen(callbacks, instance, "angle", method({ t: tank }, function(v, prev) {
+            // Skip server angle updates for the current player's tank —
+            // the client already sets its turret angle locally from mouse input,
+            // and applying the delayed server value causes visual jitter.
+            if (t.session_id == global.net_session_id) return;
             t.server_angle = v;
         }));
 

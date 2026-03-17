@@ -1,8 +1,8 @@
-# Tank Battle Multiplayer — PlayCanvas
+# Realtime Tanks Demo — PlayCanvas
 
 ![Screenshot](screenshot.webp)
 
-3D web client for [Tank Battle Multiplayer](../README.md) built with [PlayCanvas](https://playcanvas.com/), [Colyseus TypeScript SDK](https://docs.colyseus.io/getting-started/typescript), and Vite.
+3D web client for [Realtime Tanks Demo](../README.md) built with [PlayCanvas](https://playcanvas.com/), [Colyseus TypeScript SDK](https://docs.colyseus.io/getting-started/typescript), and Vite.
 
 ## Setup
 

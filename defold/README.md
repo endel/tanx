@@ -1,8 +1,8 @@
-# Tank Battle Multiplayer — Defold
+# Realtime Tanks Demo — Defold
 
 ![Screenshot](screenshot.webp)
 
-2D top-down client for [Tank Battle Multiplayer](../README.md) built with [Defold](https://defold.com/) and the [Colyseus Defold SDK](https://docs.colyseus.io/getting-started/defold).
+2D top-down client for [Realtime Tanks Demo](../README.md) built with [Defold](https://defold.com/) and the [Colyseus Defold SDK](https://docs.colyseus.io/getting-started/defold).
 
 ## Setup
 

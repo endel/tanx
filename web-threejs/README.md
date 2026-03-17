@@ -1,8 +1,8 @@
-# Tank Battle Multiplayer — Three.js
+# Realtime Tanks Demo — Three.js
 
 ![Screenshot](screenshot.webp)
 
-3D web client for [Tank Battle Multiplayer](../README.md) built with [Three.js](https://threejs.org/), [Colyseus TypeScript SDK](https://docs.colyseus.io/getting-started/typescript), and Vite.
+3D web client for [Realtime Tanks Demo](../README.md) built with [Three.js](https://threejs.org/), [Colyseus TypeScript SDK](https://docs.colyseus.io/getting-started/typescript), and Vite.
 
 ## Setup
 

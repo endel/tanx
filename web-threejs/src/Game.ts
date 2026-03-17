@@ -32,6 +32,7 @@ export class Game {
   lastSentDirX = -999;
   lastSentDirY = -999;
   lastSentAngle = -999;
+  lastTargetSendTime = 0;
 
   raycaster = new THREE.Raycaster();
   groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -96,7 +97,9 @@ export class Game {
 
     // Network — allow overriding via ?server=wss://example.com
     const params = new URLSearchParams(window.location.search);
-    const serverUrl = params.get("server") || `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.hostname}:2567`;
+    const serverUrl = params.get("server")
+      || import.meta.env.VITE_SERVER_URL
+      || `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.hostname}:2567`;
     this.network = new Network(serverUrl);
 
     // HUD refs
@@ -151,7 +154,14 @@ export class Game {
 
       callbacks.listen(tank, "x", (val: number) => (entity.targetX = val));
       callbacks.listen(tank, "y", (val: number) => (entity.targetZ = val));
-      callbacks.listen(tank, "angle", (val: number) => (entity.targetAngle = val));
+      callbacks.listen(tank, "angle", (val: number) => {
+        // Skip server angle for the current player — the client already sets
+        // its own turret angle from mouse input, and applying the delayed
+        // server value causes visual glitches.
+        if (key !== this.mySessionId) {
+          entity.targetAngle = val;
+        }
+      });
       callbacks.listen(tank, "dead", (val: boolean, prev: boolean) => {
         entity.setDead(val);
         if (val && prev === false) {
@@ -487,10 +497,13 @@ export class Game {
         let angle = Math.atan2(dx, dz) * (180 / Math.PI);
         angle = ((angle % 360) + 360) % 360;
 
-        if (Math.abs(angle - this.lastSentAngle) > 1) {
+        myTank.targetAngle = angle;
+
+        const now = performance.now();
+        if (Math.abs(angle - this.lastSentAngle) > 1 && now - this.lastTargetSendTime >= 100) {
           this.network.sendTarget(angle);
           this.lastSentAngle = angle;
-          myTank.targetAngle = angle;
+          this.lastTargetSendTime = now;
         }
       }
     }

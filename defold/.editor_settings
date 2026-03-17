@@ -1,11 +1,37 @@
 {
+  :bundle {
+    :html5 {
+      :architectures #{
+        "wasm-web"
+      }
+      :build_report false
+      :contentless false
+      :liveupdate false
+      :texture_compression "enabled"
+      :variant "release"
+      :with_symbols false
+    }
+    :last-bundle-command :project.bundle-html5
+    :output-directory "/Users/endel/Projects/colyseus/tank-battle-multiplayer/defold/build_release"
+  }
   :code {
     :breakpoints [
     ]
+    :find {
+      :term ".dev"
+    }
   }
   :workflow {
     :open-tabs [
       [
+        [
+          "/main/main.script"
+          :code
+        ]
+        [
+          "/main/main.collection"
+          :scene
+        ]
       ]
     ]
     :recent-files [
@@ -18,7 +44,11 @@
         :code
       ]
       [
-        "/main/hud.gui"
+        "/main/block.go"
+        :scene
+      ]
+      [
+        "/gfx/game.atlas"
         :scene
       ]
       [
@@ -26,12 +56,16 @@
         :scene
       ]
       [
-        "/main/block.go"
+        "/main/hud.gui"
         :scene
       ]
       [
-        "/gfx/game.atlas"
+        "/main/main.collection"
         :scene
+      ]
+      [
+        "/main/main.script"
+        :code
       ]
     ]
   }

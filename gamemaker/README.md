@@ -1,8 +1,8 @@
-# Tank Battle Multiplayer — GameMaker
+# Realtime Tanks Demo — GameMaker
 
 ![Screenshot](screenshot.webp)
 
-2D client for [Tank Battle Multiplayer](../README.md) built with [GameMaker](https://gamemaker.io/) and the [Colyseus GameMaker SDK](https://docs.colyseus.io/getting-started/gamemaker).
+2D client for [Realtime Tanks Demo](../README.md) built with [GameMaker](https://gamemaker.io/) and the [Colyseus GameMaker SDK](https://docs.colyseus.io/getting-started/gamemaker).
 
 ## Setup
 

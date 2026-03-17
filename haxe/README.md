@@ -1,8 +1,8 @@
-# Tank Battle Multiplayer — Haxe + Heaps
+# Realtime Tanks Demo — Haxe + Heaps
 
 ![Screenshot](screenshot.webp)
 
-3D client for [Tank Battle Multiplayer](../README.md) built with [Haxe](https://haxe.org/), [Colyseus Haxe SDK](https://docs.colyseus.io/getting-started/haxe) and the [Heaps](https://heaps.io/) game engine. Targets both Web (JS/WebGL) and Native (HashLink/C with SDL).
+3D client for [Realtime Tanks Demo](../README.md) built with [Haxe](https://haxe.org/), [Colyseus Haxe SDK](https://docs.colyseus.io/getting-started/haxe) and the [Heaps](https://heaps.io/) game engine. Targets both Web (JS/WebGL) and Native (HashLink/C with SDL).
 
 ## Setup
 

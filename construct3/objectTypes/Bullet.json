@@ -1,0 +1,160 @@
+{
+	"name": "Bullet",
+	"plugin-id": "Sprite",
+	"sid": 100000000000003,
+	"isGlobal": false,
+	"editorNewInstanceIsReplica": true,
+	"instanceVariables": [],
+	"behaviorTypes": [],
+	"effectTypes": [],
+	"animations": {
+		"items": [
+			{
+				"frames": [
+					{
+						"width": 12,
+						"height": 26,
+						"originX": 0.5,
+						"originY": 0.5,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 3000001,
+						"collisionPoly": {
+							"points": [0.1, 0.1, 0.9, 0.1, 0.9, 0.9, 0.1, 0.9]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 130000000000001,
+				"name": "Red",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			},
+			{
+				"frames": [
+					{
+						"width": 12,
+						"height": 26,
+						"originX": 0.5,
+						"originY": 0.5,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 3000002,
+						"collisionPoly": {
+							"points": [0.1, 0.1, 0.9, 0.1, 0.9, 0.9, 0.1, 0.9]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 130000000000002,
+				"name": "Blue",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			},
+			{
+				"frames": [
+					{
+						"width": 12,
+						"height": 26,
+						"originX": 0.5,
+						"originY": 0.5,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 3000003,
+						"collisionPoly": {
+							"points": [0.1, 0.1, 0.9, 0.1, 0.9, 0.9, 0.1, 0.9]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 130000000000003,
+				"name": "Green",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			},
+			{
+				"frames": [
+					{
+						"width": 12,
+						"height": 26,
+						"originX": 0.5,
+						"originY": 0.5,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 3000004,
+						"collisionPoly": {
+							"points": [0.1, 0.1, 0.9, 0.1, 0.9, 0.9, 0.1, 0.9]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 130000000000004,
+				"name": "Yellow",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			},
+			{
+				"frames": [
+					{
+						"width": 12,
+						"height": 26,
+						"originX": 0.5,
+						"originY": 0.5,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 3000005,
+						"collisionPoly": {
+							"points": [0.1, 0.1, 0.9, 0.1, 0.9, 0.9, 0.1, 0.9]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 130000000000005,
+				"name": "Special",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			}
+		],
+		"subfolders": []
+	}
+}

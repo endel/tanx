@@ -1,0 +1,131 @@
+{
+	"name": "TankBarrel",
+	"plugin-id": "Sprite",
+	"sid": 100000000000002,
+	"isGlobal": false,
+	"editorNewInstanceIsReplica": true,
+	"instanceVariables": [],
+	"behaviorTypes": [],
+	"effectTypes": [],
+	"animations": {
+		"items": [
+			{
+				"frames": [
+					{
+						"width": 16,
+						"height": 50,
+						"originX": 0.5,
+						"originY": 0.8,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 2000001,
+						"collisionPoly": {
+							"points": [0.1, 0.0, 0.9, 0.0, 0.9, 1.0, 0.1, 1.0]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 120000000000001,
+				"name": "Red",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			},
+			{
+				"frames": [
+					{
+						"width": 16,
+						"height": 50,
+						"originX": 0.5,
+						"originY": 0.8,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 2000002,
+						"collisionPoly": {
+							"points": [0.1, 0.0, 0.9, 0.0, 0.9, 1.0, 0.1, 1.0]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 120000000000002,
+				"name": "Blue",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			},
+			{
+				"frames": [
+					{
+						"width": 16,
+						"height": 50,
+						"originX": 0.5,
+						"originY": 0.8,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 2000003,
+						"collisionPoly": {
+							"points": [0.1, 0.0, 0.9, 0.0, 0.9, 1.0, 0.1, 1.0]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 120000000000003,
+				"name": "Green",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			},
+			{
+				"frames": [
+					{
+						"width": 16,
+						"height": 50,
+						"originX": 0.5,
+						"originY": 0.8,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 2000004,
+						"collisionPoly": {
+							"points": [0.1, 0.0, 0.9, 0.0, 0.9, 1.0, 0.1, 1.0]
+						},
+						"useCollisionPoly": true,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 120000000000004,
+				"name": "Yellow",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			}
+		],
+		"subfolders": []
+	}
+}

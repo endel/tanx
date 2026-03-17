@@ -1,0 +1,416 @@
+{
+	"name": "Event sheet 1",
+	"events": [
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-start-of-layout",
+					"objectClass": "System",
+					"sid": 691567100751900
+				}
+			],
+			"actions": [
+				{
+					"id": "join-or-create-room",
+					"objectClass": "Colyseus",
+					"sid": 605513789839411,
+					"parameters": {
+						"name": "\"battle\"",
+						"options": "\"{}\""
+					}
+				}
+			],
+			"sid": 174609653519606
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-join-room",
+					"objectClass": "Colyseus",
+					"sid": 832145678901234
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "globalThis.game.onJoinRoom(runtime);"
+				}
+			],
+			"sid": 832145678901236
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-join-error",
+					"objectClass": "Colyseus",
+					"sid": 943256789012345
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "console.error(\"Join error\");"
+				}
+			],
+			"sid": 943256789012346
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "on-leave-room",
+					"objectClass": "Colyseus",
+					"sid": 154367890123456
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "console.log(\"Left room\");"
+				}
+			],
+			"sid": 154367890123457
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-add",
+					"objectClass": "Colyseus",
+					"sid": 265478901234567,
+					"parameters": {
+						"path": "\"tanks\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onTankAdded(runtime, c.lastKey, c.lastValue);"
+				}
+			],
+			"sid": 265478901234570
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-change",
+					"objectClass": "Colyseus",
+					"sid": 376589012345678,
+					"parameters": {
+						"path": "\"tanks\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onTankChanged(runtime, c.lastKey, c.lastValue);"
+				}
+			],
+			"sid": 376589012345681
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-remove",
+					"objectClass": "Colyseus",
+					"sid": 487690123456789,
+					"parameters": {
+						"path": "\"tanks\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onTankRemoved(runtime, c.lastKey);"
+				}
+			],
+			"sid": 487690123456791
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-add",
+					"objectClass": "Colyseus",
+					"sid": 598701234567890,
+					"parameters": {
+						"path": "\"bullets\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onBulletAdded(runtime, c.lastKey, c.lastValue);"
+				}
+			],
+			"sid": 598701234567893
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-change",
+					"objectClass": "Colyseus",
+					"sid": 609812345678901,
+					"parameters": {
+						"path": "\"bullets\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onBulletChanged(runtime, c.lastKey, c.lastValue);"
+				}
+			],
+			"sid": 609812345678904
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-remove",
+					"objectClass": "Colyseus",
+					"sid": 710923456789012,
+					"parameters": {
+						"path": "\"bullets\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onBulletRemoved(runtime, c.lastKey);"
+				}
+			],
+			"sid": 710923456789014
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-add",
+					"objectClass": "Colyseus",
+					"sid": 821034567890123,
+					"parameters": {
+						"path": "\"pickables\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onPickableAdded(runtime, c.lastKey, c.lastValue);"
+				}
+			],
+			"sid": 821034567890126
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-remove",
+					"objectClass": "Colyseus",
+					"sid": 932145678901234,
+					"parameters": {
+						"path": "\"pickables\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onPickableRemoved(runtime, c.lastKey);"
+				}
+			],
+			"sid": 932145678901236
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-add",
+					"objectClass": "Colyseus",
+					"sid": 143256789012345,
+					"parameters": {
+						"path": "\"teams\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onTeamAdded(runtime, c.lastKey, c.lastValue);"
+				}
+			],
+			"sid": 143256789012348
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "state-collection-item-change",
+					"objectClass": "Colyseus",
+					"sid": 254367890123456,
+					"parameters": {
+						"path": "\"teams\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onTeamChanged(runtime, c.lastKey, c.lastValue);"
+				}
+			],
+			"sid": 254367890123459
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "schema-path-change",
+					"objectClass": "Colyseus",
+					"sid": 365478901234567,
+					"parameters": {
+						"path": "\"winnerTeam\""
+					}
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "const c = globalThis.game.getColyseus(runtime);\nglobalThis.game.onWinnerChange(c.lastValue);"
+				}
+			],
+			"sid": 365478901234569
+		},
+		{
+			"eventType": "block",
+			"conditions": [
+				{
+					"id": "every-tick",
+					"objectClass": "System",
+					"sid": 476589012345678
+				}
+			],
+			"actions": [
+				{
+					"type": "script",
+					"script": "globalThis.game.onTick(runtime);"
+				}
+			],
+			"sid": 476589012345679
+		},
+		{
+			"functionName": "sendMove",
+			"functionDescription": "",
+			"functionCategory": "",
+			"functionReturnType": "none",
+			"functionCopyPicked": false,
+			"functionIsAsync": false,
+			"functionParameters": [
+				{
+					"name": "x",
+					"type": "number",
+					"initialValue": "0",
+					"comment": "",
+					"sid": 587690123456001
+				},
+				{
+					"name": "y",
+					"type": "number",
+					"initialValue": "0",
+					"comment": "",
+					"sid": 587690123456002
+				}
+			],
+			"eventType": "function-block",
+			"conditions": [],
+			"actions": [
+				{
+					"id": "room-send-json",
+					"objectClass": "Colyseus",
+					"sid": 587690123456003,
+					"parameters": {
+						"type": "\"move\"",
+						"message": "\"{\"\"x\"\": \" & str(x) & \", \"\"y\"\": \" & str(y) & \"}\""
+					}
+				}
+			],
+			"sid": 587690123456004
+		},
+		{
+			"functionName": "sendTarget",
+			"functionDescription": "",
+			"functionCategory": "",
+			"functionReturnType": "none",
+			"functionCopyPicked": false,
+			"functionIsAsync": false,
+			"functionParameters": [
+				{
+					"name": "targetAngle",
+					"type": "number",
+					"initialValue": "0",
+					"comment": "",
+					"sid": 698701234567001
+				}
+			],
+			"eventType": "function-block",
+			"conditions": [],
+			"actions": [
+				{
+					"id": "room-send",
+					"objectClass": "Colyseus",
+					"sid": 698701234567002,
+					"parameters": {
+						"type": "\"target\"",
+						"message": "targetAngle"
+					}
+				}
+			],
+			"sid": 698701234567003
+		},
+		{
+			"functionName": "sendShoot",
+			"functionDescription": "",
+			"functionCategory": "",
+			"functionReturnType": "none",
+			"functionCopyPicked": false,
+			"functionIsAsync": false,
+			"functionParameters": [
+				{
+					"name": "shooting",
+					"type": "number",
+					"initialValue": "0",
+					"comment": "",
+					"sid": 809812345678001
+				}
+			],
+			"eventType": "function-block",
+			"conditions": [],
+			"actions": [
+				{
+					"id": "room-send",
+					"objectClass": "Colyseus",
+					"sid": 809812345678002,
+					"parameters": {
+						"type": "\"shoot\"",
+						"message": "shooting"
+					}
+				}
+			],
+			"sid": 809812345678003
+		}
+	],
+	"sid": 406227269274201
+}

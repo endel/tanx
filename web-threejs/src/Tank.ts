@@ -3,10 +3,10 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 
 const TEAM_COLORS = [0xff4444, 0x4488ff, 0x44ff44, 0xffff44];
 const TEAM_TEXTURES_PATHS = [
-  "/models/T_pixelTank_red.png",
-  "/models/T_pixelTank_blue.png",
-  "/models/T_pixelTank_green.png",
-  "/models/T_pixelTank_yellow.png",
+  "./models/T_pixelTank_red.png",
+  "./models/T_pixelTank_blue.png",
+  "./models/T_pixelTank_green.png",
+  "./models/T_pixelTank_yellow.png",
 ];
 
 let tankModelTemplate: THREE.Group | null = null;
@@ -29,7 +29,7 @@ export function preloadTankModel(): Promise<THREE.Group> {
     });
 
     loader.load(
-      "/models/pixelTank.fbx",
+      "./models/pixelTank.fbx",
       (fbx) => {
         fbx.scale.setScalar(0.012);
         fbx.traverse((child) => {

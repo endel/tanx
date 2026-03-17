@@ -1,4 +1,4 @@
--- Tank Battle Multiplayer — Defold client
+-- Realtime Tanks Demo — Defold client
 -- 2D top-down view using Colyseus Defold SDK
 
 local Colyseus = require "colyseus.sdk"
@@ -174,6 +174,8 @@ local function bind_room_events(self, room)
 			if t then t.target_y = val * SCALE end
 		end)
 		cb:listen(tank, "angle", function(val)
+			-- Skip server angle for current player; client trusts its own turret aim
+			if key == self.my_session_id then return end
 			local t = self.tanks[key]
 			if t then t.target_turret_angle = -val * (math.pi / 180) end
 		end)
@@ -324,9 +326,14 @@ local function send_input(self)
 		local aim_angle = math.atan2(dx, dy) * (180 / math.pi)
 		aim_angle = ((aim_angle % 360) + 360) % 360
 
-		if math.abs(aim_angle - self.last_angle) > 1 then
+		-- Apply turret angle locally for instant feedback
+		my_tank.target_turret_angle = -aim_angle * (math.pi / 180)
+
+		local now = socket.gettime() * 1000
+		if math.abs(aim_angle - self.last_angle) > 1 and (now - self.last_target_send_time) >= 100 then
 			self.room:send("target", aim_angle)
 			self.last_angle = aim_angle
+			self.last_target_send_time = now
 		end
 	end
 end
@@ -349,12 +356,22 @@ function init(self)
 	self.last_dir_x = -999
 	self.last_dir_y = -999
 	self.last_angle = -999
+	self.last_target_send_time = 0
 	self.team_scores = {}
 	self.winner_active = false
 
 	build_level(self)
 
-	local client = Colyseus.Client("ws://localhost:2567")
+	local server_url = "ws://localhost:2567"
+	if html5 then
+		local param = html5.run("new URLSearchParams(window.location.search).get('server') || ''")
+		if param ~= "" then
+			server_url = param
+		elseif html5.run("window.location.hostname") ~= "localhost" and html5.run("window.location.hostname") ~= "127.0.0.1" then
+			server_url = "wss://tanks-demo.colyseus.dev"
+		end
+	end
+	local client = Colyseus.Client(server_url)
 	client:join_or_create("battle", function(err, room)
 		if err then
 			print("Connection error: " .. tostring(err))

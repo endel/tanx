@@ -1,5 +1,5 @@
 [project]
-title = Tank Battle Multiplayer
+title = Realtime Tanks Demo
 version = 1.0
 dependencies#0 = https://github.com/colyseus/colyseus-defold/archive/0.17.zip
 dependencies#1 = https://github.com/defold/extension-websocket/archive/4.2.1.zip
@@ -16,4 +16,5 @@ main_collection = /main/main.collectionc
 
 [library]
 include_dirs = colyseus
+
 

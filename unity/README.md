@@ -1,8 +1,8 @@
-# Tank Battle Multiplayer — Unity
+# Realtime Tanks Demo — Unity
 
 ![Screenshot](screenshot.webp)
 
-3D isometric client for [Tank Battle Multiplayer](../README.md) built with [Unity](https://unity.com/) and the [Colyseus Unity SDK](https://docs.colyseus.io/getting-started/unity).
+3D isometric client for [Realtime Tanks Demo](../README.md) built with [Unity](https://unity.com/) and the [Colyseus Unity SDK](https://docs.colyseus.io/getting-started/unity).
 
 ## Setup
 

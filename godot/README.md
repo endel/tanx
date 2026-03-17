@@ -1,8 +1,8 @@
-# Tank Battle Multiplayer — Godot
+# Realtime Tanks Demo — Godot
 
 ![Screenshot](screenshot.webp)
 
-3D client for [Tank Battle Multiplayer](../README.md) built with [Godot 4.3+](https://godotengine.org/) and the [Colyseus Godot SDK](https://docs.colyseus.io/getting-started/godot).
+3D client for [Realtime Tanks Demo](../README.md) built with [Godot 4.3+](https://godotengine.org/) and the [Colyseus Godot SDK](https://docs.colyseus.io/getting-started/godot).
 
 ## Setup
 

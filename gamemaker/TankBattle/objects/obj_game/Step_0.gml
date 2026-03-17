@@ -27,11 +27,14 @@ if (instance_exists(my_tank)) {
     var aim_angle = client_aim_angle(my_tank.x, my_tank.y, mouse_wx, mouse_wy);
     var aim_rounded = round(aim_angle);
 
-    if (abs(aim_rounded - last_aim_angle) > 1) {
+    // Update local turret immediately (don't wait for server round-trip)
+    my_tank.server_angle = aim_rounded;
+
+    var now_ms = current_time;
+    if (abs(aim_rounded - last_aim_angle) > 1 && (now_ms - last_target_send_time) >= 100) {
         last_aim_angle = aim_rounded;
+        last_target_send_time = now_ms;
         network_send_target(aim_rounded);
-        // Update local turret immediately (don't wait for server round-trip)
-        my_tank.server_angle = aim_rounded;
     }
 }
 

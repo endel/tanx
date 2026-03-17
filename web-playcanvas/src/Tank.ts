@@ -8,10 +8,10 @@ const TEAM_COLORS: pc.Color[] = [
 ];
 
 const TEAM_TEXTURES_PATHS = [
-  "/models/T_pixelTank_red.png",
-  "/models/T_pixelTank_blue.png",
-  "/models/T_pixelTank_green.png",
-  "/models/T_pixelTank_yellow.png",
+  "./models/T_pixelTank_red.png",
+  "./models/T_pixelTank_blue.png",
+  "./models/T_pixelTank_green.png",
+  "./models/T_pixelTank_yellow.png",
 ];
 
 // ── Preloaded model data ──
@@ -43,7 +43,7 @@ export async function preloadTankModel(app: pc.AppBase): Promise<void> {
 
   // Load GLB model
   tankModelContainer = await new Promise<pc.ContainerResource>((resolve, reject) => {
-    const url = "/models/pixelTank.glb";
+    const url = "./models/pixelTank.glb";
     app.assets.loadFromUrl(url, "container", (err, asset) => {
       if (err || !asset) return reject(err || new Error("Failed to load tank model"));
       resolve(asset.resource as pc.ContainerResource);

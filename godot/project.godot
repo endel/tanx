@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Tank Battle Multiplayer"
+config/name="Realtime Tanks Demo"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.5")
 

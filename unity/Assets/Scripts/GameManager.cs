@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
 
     // Input
     private float lastDirX = -999, lastDirY = -999, lastAngle = -999;
+    private float lastTargetSendTime = 0;
     private bool winnerActive = false;
     private float announcementTimer = 0;
     private string announcementString = "";
@@ -62,6 +63,10 @@ public class GameManager : MonoBehaviour
 
     async void Start()
     {
+        // Override server URL in non-development release builds
+        if (!Debug.isDebugBuild)
+            serverUrl = "wss://tanks-demo.colyseus.dev";
+
         SetupCamera();
         BuildLevel();
         SetupLighting();
@@ -166,7 +171,14 @@ public class GameManager : MonoBehaviour
 
             cb.Listen(tank, t => t.x, (float val, float prev) => entity.targetX = val);
             cb.Listen(tank, t => t.y, (float val, float prev) => entity.targetZ = val);
-            cb.Listen(tank, t => t.angle, (float val, float prev) => entity.targetAngle = val);
+            cb.Listen(tank, t => t.angle, (float val, float prev) =>
+            {
+                // Skip server angle updates for the current player — the client
+                // already sets targetAngle directly from mouse input, and applying
+                // the server's (delayed) value causes visual glitches.
+                if (key != mySessionId)
+                    entity.targetAngle = val;
+            });
             cb.Listen(tank, t => t.dead, (bool val, bool prev) =>
             {
                 bool wasAlive = !entity.dead;
@@ -367,11 +379,14 @@ public class GameManager : MonoBehaviour
                 float aimAngle = Mathf.Atan2(dx, dz) * Mathf.Rad2Deg;
                 aimAngle = ((aimAngle % 360) + 360) % 360;
 
-                if (Mathf.Abs(aimAngle - lastAngle) > 1)
+                myTank.targetAngle = aimAngle;
+
+                float now = Time.unscaledTime;
+                if (Mathf.Abs(aimAngle - lastAngle) > 1 && now - lastTargetSendTime >= 0.1f)
                 {
                     _ = room.Send("target", aimAngle);
                     lastAngle = aimAngle;
-                    myTank.targetAngle = aimAngle;
+                    lastTargetSendTime = now;
                 }
             }
         }

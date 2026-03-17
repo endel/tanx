@@ -14,7 +14,7 @@
   "option_mac_copyright":"",
   "option_mac_disable_sandbox":false,
   "option_mac_display_cursor":true,
-  "option_mac_display_name":"TankBattle",
+  "option_mac_display_name":"Realtime Tanks Demo",
   "option_mac_enable_retina":false,
   "option_mac_enable_steam":false,
   "option_mac_icon_png":"${base_options_dir}/mac/icons/1024.png",

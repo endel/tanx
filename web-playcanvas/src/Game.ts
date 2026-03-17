@@ -60,6 +60,7 @@ export class Game {
   lastSentDirX = -999;
   lastSentDirY = -999;
   lastSentAngle = -999;
+  lastTargetSendTime = 0;
 
   // HUD elements
   healthFill!: HTMLElement;
@@ -78,6 +79,7 @@ export class Game {
     const params = new URLSearchParams(window.location.search);
     const serverUrl =
       params.get("server") ||
+      import.meta.env.VITE_SERVER_URL ||
       `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.hostname}:2567`;
     this.network = new Network(serverUrl);
 
@@ -247,7 +249,13 @@ export class Game {
 
       callbacks.listen(tank, "x", (val: number) => (entity.targetX = val));
       callbacks.listen(tank, "y", (val: number) => (entity.targetZ = val));
-      callbacks.listen(tank, "angle", (val: number) => (entity.targetAngle = val));
+      callbacks.listen(tank, "angle", (val: number) => {
+        // Skip server angle updates for the current player to avoid
+        // overwriting the locally-computed turret angle (set in sendInput).
+        if (key !== this.mySessionId) {
+          entity.targetAngle = val;
+        }
+      });
       callbacks.listen(tank, "dead", (val: boolean, prev: boolean) => {
         entity.setDead(val);
         if (val && prev === false) this.sound.explosion();
@@ -564,10 +572,13 @@ export class Game {
         let aimAngle = Math.atan2(dx, dz) * (180 / Math.PI);
         aimAngle = ((aimAngle % 360) + 360) % 360;
 
-        if (Math.abs(aimAngle - this.lastSentAngle) > 1) {
+        myTank.targetAngle = aimAngle;
+
+        const now = performance.now();
+        if (Math.abs(aimAngle - this.lastSentAngle) > 1 && now - this.lastTargetSendTime >= 100) {
           this.network.sendTarget(aimAngle);
           this.lastSentAngle = aimAngle;
-          myTank.targetAngle = aimAngle;
+          this.lastTargetSendTime = now;
         }
       }
     }

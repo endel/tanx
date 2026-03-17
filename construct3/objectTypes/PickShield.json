@@ -1,0 +1,44 @@
+{
+	"name": "PickShield",
+	"plugin-id": "Sprite",
+	"sid": 100000000000009,
+	"isGlobal": false,
+	"editorNewInstanceIsReplica": true,
+	"instanceVariables": [],
+	"behaviorTypes": [],
+	"effectTypes": [],
+	"animations": {
+		"items": [
+			{
+				"frames": [
+					{
+						"width": 32,
+						"height": 32,
+						"originX": 0.5,
+						"originY": 0.5,
+						"originalSource": "",
+						"exportFormat": "lossless",
+						"exportQuality": 0.8,
+						"fileType": "image/png",
+						"imageSpriteId": 9000001,
+						"collisionPoly": {
+							"points": [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]
+						},
+						"useCollisionPoly": false,
+						"imagePoints": [],
+						"duration": 1,
+						"tag": ""
+					}
+				],
+				"sid": 190000000000001,
+				"name": "Default",
+				"isLooping": false,
+				"isPingPong": false,
+				"repeatCount": 1,
+				"repeatTo": 0,
+				"speed": 0
+			}
+		],
+		"subfolders": []
+	}
+}

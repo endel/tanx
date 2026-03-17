@@ -29,7 +29,7 @@ private typedef PickableVisual = {
 class Game {
 	static final TEAM_COLORS_HEX:Array<Int> = [0xFF4444, 0x4488FF, 0x44FF44, 0xFFFF44];
 	static final TEAM_NAMES:Array<String> = ["Red", "Blue", "Green", "Yellow"];
-	static final SERVER_URL = "ws://localhost:2567";
+	static final SERVER_URL = #if release "wss://tanks-demo.colyseus.dev" #else "ws://localhost:2567" #end;
 
 	var s3d:h3d.scene.Scene;
 	var s2d:h2d.Scene;
@@ -52,6 +52,7 @@ class Game {
 	var lastSentDirX:Float = -999;
 	var lastSentDirY:Float = -999;
 	var lastSentAngle:Float = -999;
+	var lastTargetSendTime:Float = 0;
 
 	// h2d HUD elements
 	var hudLayer:h2d.Object;
@@ -251,7 +252,8 @@ class Game {
 				entity.targetY = (val : Float);
 			});
 			cb.listen(t, "angle", function(val:Dynamic, prev:Dynamic) {
-				entity.targetAngle = (val : Float);
+				if (k != mySessionId)
+					entity.targetAngle = (val : Float);
 			});
 			cb.listen(t, "dead", function(val:Dynamic, prev:Dynamic) {
 				var isDead:Bool = cast val;
@@ -601,10 +603,13 @@ class Game {
 				var dy = hitY - myTank.entity.y;
 				var aimAngle = Math.atan2(dx, dy) * (180 / Math.PI);
 				aimAngle = ((aimAngle % 360) + 360) % 360;
-				if (Math.abs(aimAngle - lastSentAngle) > 1) {
+				myTank.targetAngle = aimAngle;
+
+				var now = haxe.Timer.stamp() * 1000;
+				if (Math.abs(aimAngle - lastSentAngle) > 1 && now - lastTargetSendTime >= 100) {
 					network.sendTarget(aimAngle);
 					lastSentAngle = aimAngle;
-					myTank.targetAngle = aimAngle;
+					lastTargetSendTime = now;
 				}
 			}
 		}

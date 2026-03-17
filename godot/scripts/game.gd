@@ -9,7 +9,7 @@ const TEAM_COLORS: Array[Color] = [
 const TEAM_NAMES: Array[String] = ["Red", "Blue", "Green", "Yellow"]
 
 # Server endpoint — override via command line: --server=wss://example.com
-var server_url: String = "ws://localhost:2567"
+var server_url: String
 
 # Colyseus
 var client: ColyseusClient
@@ -42,6 +42,7 @@ var mouse_down: bool = false
 var last_sent_dir_x: float = -999.0
 var last_sent_dir_y: float = -999.0
 var last_sent_angle: float = -999.0
+var last_target_send_time: float = 0.0
 
 # HUD
 var health_bar: ColorRect
@@ -61,6 +62,11 @@ var hud_root: Control  # reference for adding per-tank bars
 
 
 func _ready() -> void:
+	# Use localhost for debug builds, production server for release/export builds
+	if OS.has_feature("debug"):
+		server_url = "ws://localhost:2567"
+	else:
+		server_url = "wss://tanks-demo.colyseus.dev"
 	_parse_args()
 	TankEntity.preload_model()
 	_setup_scene()
@@ -430,7 +436,10 @@ func _on_tank_add(tank, key) -> void:
 
 	callbacks.listen(tank, "x", func(val, _prev): entity.target_x = val)
 	callbacks.listen(tank, "y", func(val, _prev): entity.target_z = val)
-	callbacks.listen(tank, "angle", func(val, _prev): entity.target_angle = val)
+	callbacks.listen(tank, "angle", func(val, _prev):
+		if key != my_session_id:
+			entity.target_angle = val
+	)
 	callbacks.listen(tank, "dead", func(val, prev):
 		entity.set_dead(val)
 		if key == my_session_id:
@@ -706,11 +715,14 @@ func _send_input() -> void:
 			var target_angle_deg := rad_to_deg(atan2(dx, dz))
 			target_angle_deg = fmod(fmod(target_angle_deg, 360.0) + 360.0, 360.0)
 
+			my_tank.target_angle = target_angle_deg
+
 			var angle_diff := fmod(target_angle_deg - last_sent_angle + 540.0, 360.0) - 180.0
-			if absf(angle_diff) > 1.0:
+			var now := float(Time.get_ticks_msec())
+			if absf(angle_diff) > 1.0 and (now - last_target_send_time) >= 100.0:
 				room.send_message("target", target_angle_deg)
 				last_sent_angle = target_angle_deg
-				my_tank.target_angle = target_angle_deg
+				last_target_send_time = now
 
 
 # ── Game Loop ──
